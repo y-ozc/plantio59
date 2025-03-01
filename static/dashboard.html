@@ -34,8 +34,8 @@
 
 <body>
 
+    <button id="exit" onclick="exit()">Exit Demo</button>
     <h1>Plantio</h1>
-
     <h3 id=table-heading></h3>
     <!-- Table to Display Data -->
     <table id="data-table">
@@ -62,12 +62,13 @@
     </div>
 
     <script>
-
-
         const params = new URLSearchParams(window.location.search);
         const buttonClicked = params.get("dataset");
         const API_URL = `/data?dataset=${buttonClicked}`;
 
+        function exit(){
+            window.location.href = "/"
+        }
 
 
         // Load Data from API on Page Load
