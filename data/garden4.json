@@ -1,0 +1,62 @@
+[
+    {
+        "cultivar": "Parsley",
+        "eoc": "0.6",
+        "name": "parsley",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Tomato",
+        "eoc": "0.6",
+        "name": "tomato",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Carrot",
+        "eoc": "0.8",
+        "name": "carrot",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Garlic",
+        "eoc": "0.8",
+        "name": "garlic",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Lettuce",
+        "eoc": "0.8",
+        "name": "let",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "White Button",
+        "eoc": "0.6",
+        "name": "button",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Shiitake",
+        "eoc": "0.4",
+        "name": "mushroom",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Oyster",
+        "eoc": "0.8",
+        "name": "mushroom 2",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Portobello",
+        "eoc": "0.6",
+        "name": "porto",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Basil",
+        "eoc": "0.6",
+        "name": "basil",
+        "lastLogSince": "1"
+    }
+]

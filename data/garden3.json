@@ -1,0 +1,74 @@
+[
+    {
+        "cultivar": "Tulip",
+        "eoc": "0.6",
+        "name": "moms tulip",
+        "lastLogSince": "2"
+    },
+    {
+        "cultivar": "Orchid",
+        "eoc": "0.2",
+        "name": "orchid pretty",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Fern",
+        "eoc": "0.4",
+        "name": "fern1",
+        "lastLogSince": "2"
+    },
+    {
+        "cultivar": "Rose",
+        "eoc": "0.4",
+        "name": "pink rose",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Tulip",
+        "eoc": "0.6",
+        "name": "tulip",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Orchid",
+        "eoc": "0.2",
+        "name": "purple",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Fern",
+        "eoc": "0.4",
+        "name": "fern 2",
+        "lastLogSince": "1"
+    },
+    {
+        "cultivar": "Orchid",
+        "eoc": "0.2",
+        "name": "migros",
+        "lastLogSince": "2"
+    },
+    {
+        "cultivar": "Tulip",
+        "eoc": "0.6",
+        "name": "fancypants",
+        "lastLogSince": "2"
+    },
+    {
+        "cultivar": "Orchid",
+        "eoc": "0.2",
+        "name": "also purple",
+        "lastLogSince": "2"
+    },
+    {
+        "cultivar": "White Button",
+        "eoc": "0.6",
+        "name": "botton",
+        "lastLogSince": "0"
+    },
+    {
+        "cultivar": "Oyster",
+        "eoc": "0.8",
+        "name": "oyster",
+        "lastLogSince": "0"
+    }
+]

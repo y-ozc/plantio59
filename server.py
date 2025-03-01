@@ -1,19 +1,19 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
+import os
 
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder="static")
 CORS(app)  # Enable CORS for all origins
 
 
 DATA_FILES = {
-    "new": "garden1.json",
-    "morgan": "garden2.json",    
-    "alex": "garden3.json",
-    "reese": "garden4.json"
+    "new": os.path.join("data", "garden1.json"),
+    "morgan": os.path.join("data", "garden2.json"),
+    "alex": os.path.join("data", "garden3.json"),
+    "reese": os.path.join("data", "garden4.json"),
 }
-
-DATA_FILE = "garden2.json"  # JSON file to store data
 
 # Read JSON file
 def read_json(dataset):
@@ -25,18 +25,18 @@ def read_json(dataset):
                 return json.load(f)  # Load the JSON file
         except FileNotFoundError:
             return []  # Return an empty list if the file is not found
-            
     else:
         return []  # Return an empty list if dataset is invalid
     
 # Function to load item types from the external JSON file
 def load_item_types():
-    with open('cultivars_data.json', 'r') as file:
+    with open(os.path.join("data", "cultivars_data.json"), 'r') as file:
         return json.load(file)
 
 # Write to JSON file
-def write_json(data):
-    with open(DATA_FILE, "w") as f:
+def write_json(data, dataset):
+    file_path = DATA_FILES.get(dataset, None)
+    with open(file_path, "w") as f:
         json.dump(data, f, indent=4)
 
 # API Route: Get all data
@@ -45,15 +45,6 @@ def get_data():
     dataset = request.args.get("dataset", "new")  # Default to "new"
     data = read_json(dataset)  # Pass dataset name to read_json
     return jsonify(data)
-
-# # API Route: Add new entry
-# @app.route("/api/data", methods=["POST"])
-# def add_data():
-#     new_entry = request.json
-#     data = read_json()
-#     data.append(new_entry)
-#     write_json(data)
-#     return jsonify({"message": "Data added successfully!"}), 201
 
 
 # Route to add new data (POST request for user to submit a new item)
@@ -90,7 +81,7 @@ def add_data():
         # Add the new item to the main data collection
         data.append(new_item_data)
 
-        write_json(data)
+        write_json(data, dataset)
 
         return jsonify({"message": "Item added successfully!"}), 201
     else:
