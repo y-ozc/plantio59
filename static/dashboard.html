@@ -131,26 +131,19 @@
 
         }
 
-        // Add Data to sessionStorafe
+        // Add Data to sessionStorage
         async function addData() {
             let name = document.getElementById("name").value;
-            let typeIndex = document.getElementById("type_index").value;  // Get the selected type index from the dropdown
+            let typeIndex = parseInt(document.getElementById("type_index").value, 10);
 
             // Make sure the type index is valid
             if (typeIndex === "" || isNaN(typeIndex)) {
-                alert("Please select a valid item type");
+                alert("Please select a valid item type and name");
                 return;
             }
 
-            let storedData = JSON.parse(sessionStorage.getItem('selectedData')) || [];
-
-            const cultivar_data = sessionStorage.getItem("cultivar_data")
-            if (cultivar_data) {
-                //Parse and display
-                data = JSON.parse(cultivar_data);
-            } else {
-                data = JSON.parse('[{"name": "Not Foud", "cultivar": "Not Found"}]')
-            }
+            let storedData = JSON.parse(sessionStorage.getItem('selectedData') || "[]");
+            const cultivar_data = JSON.parse(sessionStorage.getItem("cultivar_data") || "[]");
 
             const type = cultivar_data[typeIndex]
             if (!type) {
@@ -171,7 +164,7 @@
 
             // Update sessionStorage
             sessionStorage.setItem('selectedData', JSON.stringify(storedData));
-            
+
             alert("Entry added successfully!");
 
 
