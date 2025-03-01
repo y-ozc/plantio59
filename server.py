@@ -43,6 +43,20 @@ def write_json(data, dataset):
 def home():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'index.html')
 
+@app.route("/dashboard")
+def home():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'dashboard.html')
+
+@app.route("/reccomend")
+def home():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'recPage.html')
+
+@app.route("/task")
+def home():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'taskPage.html')
+
+
+
 # API Route: Get all data
 @app.route("/api/data", methods=["GET"])
 def get_data():
