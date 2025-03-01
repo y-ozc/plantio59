@@ -4,11 +4,5 @@
         "eoc": "0.4",
         "name": "example",
         "lastLogSince": "1"
-    },
-    {
-        "name": "trial",
-        "cultivar": "Rose",
-        "eoc": 0.4,
-        "lastLogSince": "0"
     }
 ]
