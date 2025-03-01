@@ -130,24 +130,34 @@
             });
 
         }
-
         // Add Data to sessionStorage
         async function addData() {
             let name = document.getElementById("name").value;
             let typeIndex = parseInt(document.getElementById("type_index").value, 10);
 
             // Make sure the type index is valid
-            if (typeIndex === "" || isNaN(typeIndex)) {
+            if (isNaN(typeIndex)) {
                 alert("Please select a valid item type and name");
                 return;
             }
 
-            let storedData = JSON.parse(sessionStorage.getItem('selectedData') || []);
-            let cultivar_data = JSON.parse(sessionStorage.getItem("cultivar_data") || [{"cultivarName":"DID NOT WORK","category":0,"EOC":0,"waterOnceEvery":0,"info":"nope"}]);
+            let storedData = JSON.parse(sessionStorage.getItem('selectedData') || "[]");
+            let cultivar_data = JSON.parse(sessionStorage.getItem("cultivar_data") || '[{"cultivarName":"DID NOT WORK","category":0,"EOC":0,"waterOnceEvery":0,"info":"nope"}]');
 
-            const type = cultivar_data[typeIndex]
+            // Ensure cultivar_data is an array
+            if (!Array.isArray(cultivar_data)) {
+                console.error("cultivar_data is not an array:", cultivar_data);
+                alert("Data format error.");
+                return;
+            }
+
+            console.log("Type Index:", typeIndex);
+            console.log("Cultivar Data:", cultivar_data);
+            console.log("Cultivar Data Length:", cultivar_data.length);
+
+            const type = cultivar_data[typeIndex];
             if (!type) {
-                alert("No matching data found for that number. C List length =" + cultivar_data.length);
+                alert("No matching data found for that number. C List length = " + cultivar_data.length);
                 return;
             }
 
@@ -166,7 +176,6 @@
             sessionStorage.setItem('selectedData', JSON.stringify(storedData));
 
             alert("Entry added successfully!");
-
 
             loadData(); // Reload data after adding
         }
