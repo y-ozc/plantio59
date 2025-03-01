@@ -1,16 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
-        button { margin-top: 10px; padding: 8px 12px; cursor: pointer; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Plantio</h1>
@@ -41,31 +62,31 @@
     </div>
 
     <script>
-        
-        
+
+
         const params = new URLSearchParams(window.location.search);
         const buttonClicked = params.get("dataset");
         const API_URL = `/data?dataset=${buttonClicked}`;
 
-        
-        
+
+
         // Load Data from API on Page Load
-        window.onload = async function() {
+        window.onload = async function () {
             loadData(); // Call loadData as soon as the page is loaded
         }
 
-        
+
         function openRecPage() {
-        window.location.href = "recPage.html"; // Replace with the URL of the new page
+            window.location.href = "recPage.html"; // Replace with the URL of the new page
         }
-        
+
         function openTaskPage() {
-        window.location.href = "taskPage.html"; // Replace with the URL of the new page
+            window.location.href = "taskPage.html"; // Replace with the URL of the new page
         }
 
         // Load Data from API
         async function loadData() {
-            
+
             // Update table heading dynamically
             const tableHeading = document.getElementById("table-heading");
             if (buttonClicked === "new") {
@@ -81,14 +102,14 @@
             }
 
             const selectedData = sessionStorage.getItem('selectedData');
-            
+
             if (selectedData) {
                 //Parse and display
                 data = JSON.parse(selectedData);
             } else {
                 data = JSON.parse('[{"name": "Not Foud", "cultivar": "Not Found"}]')
             }
-            
+
             let tbody = document.getElementById("data-body");
             tbody.innerHTML = ""; // Clear existing rows
 
@@ -110,7 +131,7 @@
 
         }
 
-        // Add Data to API
+        // Add Data to sessionStorafe
         async function addData() {
             let name = document.getElementById("name").value;
             let typeIndex = document.getElementById("type_index").value;  // Get the selected type index from the dropdown
@@ -121,17 +142,43 @@
                 return;
             }
 
-            let response = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, type_index:typeIndex})
-            });
+            let storedData = JSON.parse(sessionStorage.getItem('selectedData')) || [];
 
-            let result = await response.json();
-            alert(result.message);
+            const cultivar_data = sessionStorage.getItem("cultivar_data")
+            if (cultivar_data) {
+                //Parse and display
+                data = JSON.parse(cultivar_data);
+            } else {
+                data = JSON.parse('[{"name": "Not Foud", "cultivar": "Not Found"}]')
+            }
+
+            const type = cultivar_data[typeIndex]
+            if (!type) {
+                alert("No matching data found for that number.");
+                return;
+            }
+
+            // Create a new entry
+            const newEntry = {
+                "name": name,
+                "cultivar": type.cultivarName,
+                "eoc": type.EOC,
+                "lastLogSince": "0"
+            };
+
+            // Add new entry to the array
+            storedData.push(newEntry);
+
+            // Update sessionStorage
+            sessionStorage.setItem('selectedData', JSON.stringify(storedData));
+            
+            alert("Entry added successfully!");
+
+
             loadData(); // Reload data after adding
         }
     </script>
 
 </body>
+
 </html>
