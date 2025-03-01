@@ -72,11 +72,11 @@ def task():
 
 
 # API Route: Get all data
-@app.route("/api/data", methods=["GET"])
-def get_data():
-    dataset = request.args.get("dataset", "new")  # Default to "new"
-    data = read_json(dataset)  # Pass dataset name to read_json
-    return jsonify(data)
+# @app.route("/api/data", methods=["GET"])
+# def get_data():
+#     dataset = request.args.get("dataset", "new")  # Default to "new"
+#     data = read_json(dataset)  # Pass dataset name to read_json
+#     return jsonify(data)
 
 
 # Route to add new data (POST request for user to submit a new item)
