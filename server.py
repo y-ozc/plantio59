@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import json
 import os
@@ -38,6 +38,10 @@ def write_json(data, dataset):
     file_path = DATA_FILES.get(dataset, None)
     with open(file_path, "w") as f:
         json.dump(data, f, indent=4)
+
+@app.route("/")
+def home():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'index.html')
 
 # API Route: Get all data
 @app.route("/api/data", methods=["GET"])
