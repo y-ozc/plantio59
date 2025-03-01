@@ -12,15 +12,15 @@
     </p>
 
     <div id="buttons-container">
-        <button id="newUser" onclick="openDashboard(`new`)">New User</button>
-        <button id="morgan" onclick="openDashboard(`morgan`)">Morgan</button>
-        <button id="alex" onclick="openDashboard(`alex`)">Alex</button>
-        <button id="reese" onclick="openDashboard(`reese`)">Reese</button>
+        <button id="newUser" onclick="loadData(`garden1.json`, `new`)">New User</button>
+        <button id="morgan" onclick="loadData(`garden2.json`,`morgan`)">Morgan</button>
+        <button id="alex" onclick="loadData(`garden3.json`,`alex`)">Alex</button>
+        <button id="reese" onclick="loadData(`garden4.json`,`reese`)">Reese</button>
     </div>
 
     <script>
 
-        function loadData(fileName) {
+        function loadData(fileName, user) {
             // Fetch JSON data from the server based on the filename
             fetch(`/data/${fileName}`)
                 .then(response => response.json())  // Parse the response as JSON
@@ -30,7 +30,8 @@
                     console.log('Data has been stored in sessionStorage:', data);
 
                     // Navigate to second page
-                    window.location.href = 'secondPage.html';
+                    openDashboard(user)
+
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -44,13 +45,6 @@
             window.location.href = `dashboard.html?dataset=${user}`;
 
         }
-
-
-        // Event listeners
-        document.getElementById('newUser').addEventListener('click', () => loadData('garde1.json'));
-        document.getElementById('morgan').addEventListener('click', () => loadData('garden2.json'));
-        document.getElementById('alex').addEventListener('click', () => loadData('garden3.json'));
-        document.getElementById('reese').addEventListener('click', () => loadData('garden4.json'));
 
 
     </script>
