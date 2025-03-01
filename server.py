@@ -44,15 +44,15 @@ def home():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'index.html')
 
 @app.route("/dashboard")
-def home():
+def dash():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'dashboard.html')
 
 @app.route("/reccomend")
-def home():
+def rec():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'recPage.html')
 
 @app.route("/task")
-def home():
+def task():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'taskPage.html')
 
 
