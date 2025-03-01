@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+        button { margin-top: 10px; padding: 8px 12px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Plantio</h1>
+
+    <h3 id=table-heading></h3>
+    <!-- Table to Display Data -->
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Cultivar</th>
+            </tr>
+        </thead>
+        <tbody id="data-body">
+            <!-- Table rows will be inserted here -->
+        </tbody>
+    </table>
+
+
+    <h3>Add New Entry:</h3>
+    <input type="text" id="name" placeholder="Name">
+    <input type="number" id="type_index" placeholder="0">
+    <button onclick="addData()">Add</button>
+
+    <div id="buttons-container">
+        <button id="recommend" onclick="openRecPage()">Reccomend A Plant</button>
+        <button id="todolist" onclick="openTaskPage()">See Todays Tasks</button>
+    </div>
+
+    <script>
+        
+        
+        const params = new URLSearchParams(window.location.search);
+        const buttonClicked = params.get("dataset");
+        const API_URL = `http://127.0.0.1:8000/api/data?dataset=${buttonClicked}`;
+
+        
+        // Load Data from API on Page Load
+        window.onload = async function() {
+            loadData(); // Call loadData as soon as the page is loaded
+        }
+
+        
+        function openRecPage() {
+        window.location.href = "recPage.html"; // Replace with the URL of the new page
+        }
+        
+        function openTaskPage() {
+        window.location.href = "taskPage.html"; // Replace with the URL of the new page
+        }
+
+        // Load Data from API
+        async function loadData() {
+
+            // Update table heading dynamically
+            const tableHeading = document.getElementById("table-heading");
+            if (buttonClicked === "new") {
+                tableHeading.innerText = "New Garden";
+            } else if (buttonClicked === "morgan") {
+                tableHeading.innerText = "Morgan's Garden";
+            } else if (buttonClicked === "alex") {
+                tableHeading.innerText = "Alex's Garden";
+            } else if (buttonClicked === "reese") {
+                tableHeading.innerText = "Reese's Garden";
+            } else {
+                tableHeading.innerText = "Unknown Garden";
+            }
+            
+            let response = await fetch(API_URL);
+            let data = await response.json();
+            
+            let tbody = document.getElementById("data-body");
+            tbody.innerHTML = ""; // Clear existing rows
+
+            // Loop through each item in the data and add a table row for each one
+            data.forEach(item => {
+                let tr = document.createElement("tr");  // Create a new row
+                let tdName = document.createElement("td");  // Create a new cell for Name
+                tdName.textContent = item.name;  // Set the Name value in the cell
+                let tdCultivar = document.createElement("td");  // Create a new cell for Cultivar
+                tdCultivar.textContent = item.cultivar;  // Set the Cultivar value in the cell
+
+                // Append the cells to the row
+                tr.appendChild(tdName);
+                tr.appendChild(tdCultivar);
+
+                // Append the row to the table body
+                tbody.appendChild(tr);
+            });
+
+        }
+
+        // Add Data to API
+        async function addData() {
+            let name = document.getElementById("name").value;
+            let typeIndex = document.getElementById("type_index").value;  // Get the selected type index from the dropdown
+
+            // Make sure the type index is valid
+            if (typeIndex === "" || isNaN(typeIndex)) {
+                alert("Please select a valid item type");
+                return;
+            }
+
+            let response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, type_index:typeIndex})
+            });
+
+            let result = await response.json();
+            alert(result.message);
+            loadData(); // Reload data after adding
+        }
+    </script>
+
+</body>
+</html>
