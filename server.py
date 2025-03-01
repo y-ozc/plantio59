@@ -43,15 +43,15 @@ def write_json(data, dataset):
 def home():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'index.html')
 
-@app.route("/dashboard")
+@app.route("/dashboard.html")
 def dash():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'dashboard.html')
 
-@app.route("/reccomend")
+@app.route("/recPage.html")
 def rec():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'recPage.html')
 
-@app.route("/task")
+@app.route("/taskPage.html")
 def task():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'taskPage.html')
 
