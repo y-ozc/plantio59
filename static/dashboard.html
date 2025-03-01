@@ -45,8 +45,9 @@
         
         const params = new URLSearchParams(window.location.search);
         const buttonClicked = params.get("dataset");
-        const API_URL = `http://127.0.0.1:8000/api/data?dataset=${buttonClicked}`;
+        const API_URL = `/data?dataset=${buttonClicked}`;
 
+        
         
         // Load Data from API on Page Load
         window.onload = async function() {
@@ -64,7 +65,7 @@
 
         // Load Data from API
         async function loadData() {
-
+            
             // Update table heading dynamically
             const tableHeading = document.getElementById("table-heading");
             if (buttonClicked === "new") {
@@ -78,9 +79,15 @@
             } else {
                 tableHeading.innerText = "Unknown Garden";
             }
+
+            const selectedData = sessionStorage.getItem('selectedData');
             
-            let response = await fetch(API_URL);
-            let data = await response.json();
+            if (selectedData) {
+                //Parse and display
+                data = JSON.parse(selectedData);
+            } else {
+                data = JSON.parse({"name": "Not Foud", "cultivar": "Not Found"})
+            }
             
             let tbody = document.getElementById("data-body");
             tbody.innerHTML = ""; // Clear existing rows

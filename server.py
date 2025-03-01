@@ -10,11 +10,24 @@ CORS(app)  # Enable CORS for all origins
 DATA_DIR = os.path.join(app.root_path, 'data')
 
 DATA_FILES = {
-    "new": "https://raw.githubusercontent.com/y-ozc/plantio59/refs/heads/main/data/garden1.json",
+    "new": os.path.join(DATA_DIR, "garden1.json"),
     "morgan": os.path.join(DATA_DIR, "garden2.json"),
     "alex": os.path.join(DATA_DIR, "garden3.json"),
     "reese": os.path.join(DATA_DIR, "garden4.json"),
 }
+
+
+# Serve static files from the /data folder
+@app.route('/data/<filename>', methods=['GET'])
+def get_data(filename):
+    try:
+        # Define the folder where JSON files are stored
+        data_folder = os.path.join(app.root_path, 'data')
+        
+        # Send the file from the data folder
+        return send_from_directory(data_folder, filename)
+    except FileNotFoundError:
+        return jsonify({"error": "File not found"}), 404
 
 # Read JSON file
 def read_json(dataset):
@@ -31,7 +44,7 @@ def read_json(dataset):
     
 # Function to load item types from the external JSON file
 def load_item_types():
-    with open("https://raw.githubusercontent.com/y-ozc/plantio59/refs/heads/main/data/cultivars_data.json", 'r') as file:
+    with open(os.path.join(DATA_DIR, "cultivars_data.json"), 'r') as file:
         return json.load(file)
 
 # Write to JSON file
