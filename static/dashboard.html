@@ -142,12 +142,12 @@
                 return;
             }
 
-            let storedData = JSON.parse(sessionStorage.getItem('selectedData') || "[]");
-            const cultivar_data = JSON.parse(sessionStorage.getItem("cultivar_data") || "[]");
+            let storedData = JSON.parse(sessionStorage.getItem('selectedData') || []);
+            let cultivar_data = JSON.parse(sessionStorage.getItem("cultivar_data") || [{"cultivarName":"DID NOT WORK","category":0,"EOC":0,"waterOnceEvery":0,"info":"nope"}]);
 
             const type = cultivar_data[typeIndex]
             if (!type) {
-                alert("No matching data found for that number.");
+                alert("No matching data found for that number. C List length =" + cultivar_data.length);
                 return;
             }
 
