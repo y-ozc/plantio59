@@ -49,7 +49,7 @@
         }
 
         function loadCultivars(){
-            fetch(`/data/cultivar_data.json`)
+            fetch(`/data/cultivars_data.json`)
                 .then(response => response.json())  // Parse the response as JSON
                 .then(data => {
                     // Store the JSON data in sessionStorage
