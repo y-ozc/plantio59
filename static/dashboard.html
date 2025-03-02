@@ -37,12 +37,16 @@
         <button id="todolist" onclick="openTaskPage()">See Todays Tasks</button>
     </div>
 
+    <div>
+        <p id="example">aaa</p>
+    </div>
+
     <script>
         const params = new URLSearchParams(window.location.search);
         const buttonClicked = params.get("dataset");
         const API_URL = `/data?dataset=${buttonClicked}`;
 
-        function exit(){
+        function exit() {
             window.location.href = "/"
         }
 
@@ -106,6 +110,13 @@
                 tbody.appendChild(tr);
             });
 
+            // for testing to see user vectors being acessed
+            const user_vector = sessionStorage.getItem('vector');
+            if (user_vector) {
+                document.getElementById("example").textContent = user_vector;
+            } else {
+                document.getElementById("example").textContent = "No data found in sessionStorage.";
+            }
         }
         // Add Data to sessionStorage
         async function addData() {

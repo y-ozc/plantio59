@@ -60,6 +60,17 @@
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
+            
+            fetch(`/data/user_vectors.json`)
+                .then(response => response.json())  // Parse the response as JSON
+                .then(data => {
+                    // Store the JSON data in sessionStorage
+                    sessionStorage.setItem('vector', JSON.stringify(data));
+                    console.log('Data has been stored in sessionStorage:', data)
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
         }
 
         
