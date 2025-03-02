@@ -10,7 +10,7 @@ BASE_VECTOR = {
     "schedule": 1
 }
 
-JSON_PATH = 'data\user_vectors.json'
+JSON_PATH = 'data\\user_vectors.json'
 
 # STUB
 # Takes a garden json and name. 
@@ -32,7 +32,7 @@ def updateVector(vecotor):
 
 
 if __name__ == "__main__":
-    makeUserVector('data\garden1.json')
-    makeUserVector('data\garden2.json')
-    makeUserVector('data\garden3.json')
-    makeUserVector('data\garden4.json')
+    makeUserVector('data\\garden1.json')
+    makeUserVector('data\\garden2.json')
+    makeUserVector('data\\garden3.json')
+    makeUserVector('data\\garden4.json')

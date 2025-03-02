@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-import json
 import os
+import recommend
+import schedule
 
 
 app = Flask(__name__, static_folder="static")
@@ -36,6 +37,20 @@ def rec():
 @app.route("/taskPage.html")
 def task():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'taskPage.html')
+
+# STUB
+@app.route('/api/rec-function', methods=['GET'])
+def rec_fn():
+    response = recommend.generateRecommendations(0, 0)
+    return jsonify({"message": response})
+
+
+# STUB
+@app.route("/api/task-function", methods=['GET'])
+def task_fn():
+    response = schedule.scheduleFunction()
+    return jsonify({"message": response})
+
 
 
 if __name__ == "__main__":

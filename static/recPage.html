@@ -9,8 +9,22 @@
 <body>
     <button id="exit" onclick="exit()">Exit Demo</button>
     <h1>Your Reccomendations</h1>
+    <p id="example"></p>
 </body>
 <script>
+
+    window.onload = reccomendation()
+
+    function reccomendation(){
+
+        fetch('/api/rec-function')
+        .then(response => response.json())  // Parse JSON response
+            .then(data => {
+                document.getElementById("example").innerText = data.message; // Update paragraph text
+            })
+            .catch(error => console.error('Error calling Python function:', error));
+
+    }
 
     function exit(){
             window.location.href = "/"

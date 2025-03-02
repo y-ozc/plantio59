@@ -4,4 +4,4 @@ import json
 # STUB
 # exmaple function
 def scheduleFunction():
-    return
+    return "Have some tasks."
