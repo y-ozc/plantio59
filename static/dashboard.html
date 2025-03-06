@@ -44,7 +44,6 @@
     <script>
         const params = new URLSearchParams(window.location.search);
         const buttonClicked = params.get("dataset");
-        const API_URL = `/data?dataset=${buttonClicked}`;
 
         function exit() {
             window.location.href = "/"
@@ -58,11 +57,11 @@
 
 
         function openRecPage() {
-            window.location.href = "recPage.html"; // Replace with the URL of the new page
+            window.location.href = `recPage.html?dataset=${buttonClicked}`; // Replace with the URL of the new page
         }
 
         function openTaskPage() {
-            window.location.href = "taskPage.html"; // Replace with the URL of the new page
+            window.location.href = `taskPage.html?dataset=${buttonClicked}`; // Replace with the URL of the new page
         }
 
         // Load Data from API

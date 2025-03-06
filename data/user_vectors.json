@@ -34,5 +34,14 @@
         "mushroom": 0.5,
         "eoc_ideal": 0.5,
         "schedule": 1
+    },
+    {
+        "user": "random",
+        "ornament": 0.5,
+        "herb": 0.5,
+        "crop": 0.5,
+        "mushroom": 0.5,
+        "eoc_ideal": 0.5,
+        "schedule": 1
     }
 ]
