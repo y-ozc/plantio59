@@ -1,9 +1,23 @@
 import json
+import os
 import random
 
 
-
-cultivars_data = json.loads('data\\cultivars_data.json')
+def load_cultivars():
+    # Get the path to the JSON file (relative path)
+    file_path = os.path.join(os.path.dirname(__file__), 'data', 'cultivars_data.json')
+    
+    # Read the JSON file and return it as a Python object (list, dictionary, etc.)
+    try:
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+        return data  # Return the data loaded from the JSON file
+    except FileNotFoundError:
+        print("data\cultivars_data.json file not found")
+        return None
+    except json.JSONDecodeError:
+        print("Error decoding JSON")
+        return None
 
 def pick_category(user_vector):
 
@@ -16,12 +30,51 @@ def pick_category(user_vector):
     # Pick a number from 1 to 4 using weights
     return random.choices(range(1, 5), weights=weights)
 
-
 def get_categories(category):
 
+    cultivars_data = load_cultivars()
+    
     filtered_cultivars = [item for item in cultivars_data if item['category'] == category]
     
     return filtered_cultivars
+
+
+
+def genRec(data):
+
+    # Check if the data contains 'user' key directly
+    if isinstance(data, dict) and 'user' in data:
+        user_name = data.get('user')  # Extract the 'user' key from the data
+    else:
+        return 'Invalid data structure'
+
+    # Load the plant data
+    plants_data = load_cultivars()
+
+    if plants_data is None:
+        return 'Error loading plant data'
+    
+    
+    switch = {
+        'new': 0,  # Index in plants.json for 'new'
+        'morgan': 1,  # Index for 'morgan'
+        'alex': 2,  # Index for 'alex'
+        'reese': 3,  # Index for 'reese'
+        'random': 4,  # Index for 'random'
+    }
+
+    # Get the index for the user or use a default if not found
+    index = switch.get(user_name, None)
+
+    if index is None or index >= len(plants_data):
+        return 'User not found or invalid index'
+
+    # Get the corresponding plant entry
+    user_plant_data = plants_data[index]
+
+    # Return the recommendation based on the user or a default message
+    return json.dumps(user_plant_data) 
+
 
 
 # !!! web app will interract with this function
@@ -70,7 +123,7 @@ def generateRecommendations(json_vector): #user vector will come as a json entry
     challenge_pick = min(possible_picks, key=lambda item: abs(item['value'] - (ideal_eoc - 0.1)))
 
     # cobine all picks into a single 
-    combined_result = {"alley": alley_pick, "simple": simple_pick, "challenge": challenge_pick}
+    combined_result = [alley_pick, simple_pick, challenge_pick]
 
     # Convert to JSON string for easy transmission to JavaScript
     return json.dumps(combined_result)

@@ -1,34 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reccomendations Page</title>
     <link rel="stylesheet" href="static/styles.css">
 </head>
+
 <body>
     <button id="exit" onclick="exit()">Exit Demo</button>
     <h1>Your Reccomendations</h1>
-    <p id="example"></p>
-</body>
-<script>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Cultivar</th>
+                <th>Watering</th>
+            </tr>
+        </thead>
+        <tbody id="data-body">
+            <!-- Table rows will be inserted here -->
+        </tbody>
+    </table>
 
-    window.onload = reccomendation()
+    <p id="test"></p>
 
-    function reccomendation(){
 
-        fetch('/api/rec-function')
-        .then(response => response.json())  // Parse JSON response
-            .then(data => {
-                document.getElementById("example").innerText = data.message; // Update paragraph text
+    <script>
+
+        window.onload = recommendations();
+
+        function recommendations() {
+
+            const userVector = selectVector();
+
+            fetch('/api/rec-function', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userVector)
             })
-            .catch(error => console.error('Error calling Python function:', error));
+                .then(response => response.json())
+                .then(result => {
+                    // document.getElementById('test').textContent = JSON.stringify(result, null, 2);
 
-    }
+                    const recString = result.recommendation;
+                    //document.getElementById('test').textContent = recString
+                    recs = JSON.parse(recString);
 
-    function exit(){
+                    const tableBody = document.getElementById('data-body');
+                    tableBody.innerHTML = "";
+
+                    // Create a row for the plant recommendation
+                    const row = document.createElement('tr');
+
+
+                    const categoryCell = document.createElement('td');
+                    categoryCell.textContent = getCategory(recs.category);
+                    row.appendChild(categoryCell);
+
+                    const cultivarNameCell = document.createElement('td');
+                    cultivarNameCell.textContent = recs.cultivarName;
+                    row.appendChild(cultivarNameCell);
+
+                    const waterIntervalCell = document.createElement('td');
+                    waterIntervalCell.textContent = recs.waterOnceEvery;
+                    row.appendChild(waterIntervalCell);
+
+
+
+                    // Append the row to the tbody
+                    tableBody.appendChild(row);
+
+                })
+                .catch(error => console.error('Error:', error)); // Handle errors
+
+        }
+
+        function getCategory(number) {
+            const dictionary = {
+                1: 'Ornamental Plant',
+                2: 'Herb',
+                3: 'Crop',
+                4: 'Mushroom'
+            };
+            return dictionary[number] || 'Unknown';
+        }
+
+        function selectVector() {
+            const user_vectors = sessionStorage.getItem('vector');
+            const data = JSON.parse(user_vectors) || [];
+            const params = new URLSearchParams(window.location.search);
+            const username = params.get("dataset");
+
+            const selectedVector = data.find(entry => entry.user == username);
+            return selectedVector;
+        }
+
+        function exit() {
             window.location.href = "/"
         }
 
-</script>
+    </script>
+</body>
+
 </html>

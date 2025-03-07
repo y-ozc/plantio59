@@ -1,6 +1,8 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, Response
 from flask_cors import CORS
 import os
+import json
+from collections import OrderedDict
 import recommend
 import schedule
 
@@ -39,11 +41,12 @@ def task():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'taskPage.html')
 
 # STUB
-@app.route('/api/rec-function', methods=['GET'])
+@app.route('/api/rec-function', methods=['POST'])
 def rec_fn():
-    response = recommend.generateRecommendations(0, 0)
-    return jsonify({"message": response})
-
+    # Get JSON data from the request
+    data = request.get_json()
+    recommendation = recommend.genRec(data)
+    return jsonify({'recommendation': recommendation})
 
 # STUB
 @app.route("/api/task-function", methods=['GET'])
@@ -55,4 +58,4 @@ def task_fn():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))  # Render assigns a PORT dynamically
-    app.run(debug=False, host="0.0.0.0", port=port)
+    app.run(debug=True, host="0.0.0.0", port=port)
