@@ -6,7 +6,9 @@
         "crop": 0.5,
         "mushroom": 0.5,
         "eoc_ideal": 0.5,
-        "schedule": 1
+        "morning": 0,
+        "evening": 0,
+        "afternoon": 0
     },
     {
         "user": "morgan",
@@ -15,7 +17,9 @@
         "crop": 0.5,
         "mushroom": 0.5,
         "eoc_ideal": 0.5,
-        "schedule": 1
+        "morning": 0,
+        "evening": 0,
+        "afternoon": 0
     },
     {
         "user": "alex",
@@ -24,7 +28,9 @@
         "crop": 0.5,
         "mushroom": 0.5,
         "eoc_ideal": 0.5,
-        "schedule": 1
+        "morning": 0,
+        "evening": 0,
+        "afternoon": 0
     },
     {
         "user": "reese",
@@ -33,7 +39,9 @@
         "crop": 0.5,
         "mushroom": 0.5,
         "eoc_ideal": 0.5,
-        "schedule": 1
+        "morning": 0,
+        "evening": 0,
+        "afternoon": 0
     },
     {
         "user": "random",
@@ -42,6 +50,8 @@
         "crop": 0.5,
         "mushroom": 0.5,
         "eoc_ideal": 0.5,
-        "schedule": 1
+        "morning": 0,
+        "evening": 0,
+        "afternoon": 0
     }
 ]
