@@ -31,7 +31,7 @@ def pick_category(user_vector):
     return random.choices(range(1, 5), weights=weights)
 
 
-def genRec(data):
+def idkwhatthisdoes(data):
     # Check if the data contains 'user' key directly
     if isinstance(data, dict) and 'user' in data:
         user_name = data.get('user')  # Extract the 'user' key from the data
@@ -122,10 +122,10 @@ def get_user_garden(user_name):
     # Return the garden data for the user
     return plants_data[garden_number]
 
-def generateRecommendations(json_vector):
+def giveMessage(json_vector):
     # Parse user vector
     try:
-        user_vector = json.loads(json_vector)
+        user_vector = json_vector
     except json.JSONDecodeError as e:
         print(f"Error parsing JSON: {e}")
         return json.dumps({"error": "Invalid JSON input"})
@@ -171,4 +171,20 @@ def generateRecommendations(json_vector):
     }
 
     # Return as JSON string
-    return json.dumps(combined_result)
+    #return json.dumps(combined_result)
+
+
+
+# Test block
+if __name__ == "__main__":
+    # Example user vector for testing
+    user_vector = {
+        "user": "new",
+        "morning": 0.8,
+        "afternoon": 0.5,
+        "evening": 0.3
+    }
+
+    # Call the function you want to test
+    result = giveMessage(user_vector)
+    print("Test Result:", result)

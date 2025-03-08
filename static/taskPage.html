@@ -3,30 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Page</title>
+    <title>Garden Page</title>
     <link rel="stylesheet" href="static/styles.css">
+    <style>
+        .todo-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
+            display: inline-block;
+        }
+        .highlight {
+            background-color: #f0f8ff; /* Light blue background for the highlighted box */
+            border: 2px solid #007bff; /* Blue border for the highlighted box */
+        }
+    </style>
 </head>
 <body>
     <button id="exit" onclick="exit()">Exit Demo</button>
-    <h1>Tasks</h1>
-    <p id="example"></p>
+    <h1>Your Garden</h1>
+    <p id="message"></p>
+    <h2>Plants in Your Garden</h2>
+    <ul id="garden-plants"></ul>
+
+    <!-- To-Do Boxes -->
+    <div id="todo-container">
+        <div id="morning-box" class="todo-box">
+            <h3>Morning</h3>
+            <p id="morning-message"></p>
+        </div>
+        <div id="afternoon-box" class="todo-box">
+            <h3>Afternoon</h3>
+            <p id="afternoon-message"></p>
+        </div>
+        <div id="evening-box" class="todo-box">
+            <h3>Evening</h3>
+            <p id="evening-message"></p>
+        </div>
+    </div>
 </body>
 <script>
-    window.onload = example()
+    window.onload = loadGarden();
 
-    function example(){
+    function loadGarden() {
         fetch('/api/task-function')
-        .then(response => response.json())  // Parse JSON response
+            .then(response => response.json())  // Parse JSON response
             .then(data => {
-                document.getElementById("example").innerText = data.message; // Update paragraph text
-            })
-            .catch(error => console.error('Error calling Python function:', error));
+                // Display the time-based message in the appropriate box
+                const morningBox = document.getElementById("morning-box");
+                const afternoonBox = document.getElementById("afternoon-box");
+                const eveningBox = document.getElementById("evening-box");
 
+                // Reset all boxes
+                morningBox.classList.remove("highlight");
+                afternoonBox.classList.remove("highlight");
+                eveningBox.classList.remove("highlight");
+
+                // Highlight the box corresponding to the time with the highest score
+                if (data.message.includes("morning")) {
+                    document.getElementById("morning-message").innerText = data.message;
+                    morningBox.classList.add("highlight");
+                } else if (data.message.includes("afternoon")) {
+                    document.getElementById("afternoon-message").innerText = data.message;
+                    afternoonBox.classList.add("highlight");
+                } else if (data.message.includes("evening")) {
+                    document.getElementById("evening-message").innerText = data.message;
+                    eveningBox.classList.add("highlight");
+                }
+
+                // Display the plants in the user's garden
+                const gardenPlants = document.getElementById("garden-plants");
+                if (data.garden && data.garden.plants) {
+                    data.garden.plants.forEach(plant => {
+                        const listItem = document.createElement("li");
+                        listItem.innerText = `${plant.name} (Category: ${plant.category}, EOC: ${plant.value})`;
+                        gardenPlants.appendChild(listItem);
+                    });
+                } else {
+                    gardenPlants.innerText = "No plants found in your garden.";
+                }
+            })
+            .catch(error => console.error('Error fetching garden data:', error));
     }
 
-    function exit(){
-            window.location.href = "/"
-        }
-
+    function exit() {
+        window.location.href = "/";
+    }
 </script>
 </html>

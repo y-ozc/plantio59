@@ -51,8 +51,9 @@ def rec_fn():
 # STUB
 @app.route("/api/task-function", methods=['GET'])
 def task_fn():
-    response = schedule.scheduleFunction()
-    return jsonify({"message": response})
+    data = request.get_json()
+    message = schedule.giveMessage(data)
+    return jsonify({"message": message})
 
 
 
