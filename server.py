@@ -49,10 +49,10 @@ def rec_fn():
     return jsonify({'recommendation': recommendation})
 
 # STUB
-@app.route("/api/task-function", methods=['GET'])
+@app.route("/api/task-function", methods=['POST'])
 def task_fn():
     data = request.get_json()
-    message = schedule.giveMessage(data)
+    message = schedule.getUser(data)
     return jsonify({"message": message})
 
 

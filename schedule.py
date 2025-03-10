@@ -13,7 +13,7 @@ def load_cultivars():
             data = json.load(f)
         return data  # Return the data loaded from the JSON file
     except FileNotFoundError:
-        print("data\cultivars_data.json file not found")
+        print("data/cultivars_data.json file not found")
         return None
     except json.JSONDecodeError:
         print("Error decoding JSON")
@@ -21,8 +21,8 @@ def load_cultivars():
 
 
 def pick_category(user_vector):
-    # Get categories
-    selected_items = list(user_vector.items())[7:10]  # Slice from seventh to tenth entry
+    # Get categories (morning, afternoon, evening)
+    selected_items = list(user_vector.items())[6:8]  # Slice to get morning, afternoon, evening scores
 
     # Unzip keys and values
     _, weights = zip(*selected_items)  # Ignore names, keep weights
@@ -31,7 +31,16 @@ def pick_category(user_vector):
     return random.choices(range(1, 5), weights=weights)
 
 
-def idkwhatthisdoes(data):
+def get_categories(category):
+    cultivars_data = load_cultivars()
+
+    # Filter cultivars by category
+    filtered_cultivars = [item for item in cultivars_data if item['category'] == category]
+
+    return filtered_cultivars
+
+
+def getUser(data):
     # Check if the data contains 'user' key directly
     if isinstance(data, dict) and 'user' in data:
         user_name = data.get('user')  # Extract the 'user' key from the data
@@ -60,92 +69,23 @@ def idkwhatthisdoes(data):
 
     # Get the corresponding plant entry
     user_plant_data = plants_data[index]
+    user_trypls = generateMessages(json.dumps(data))
 
     # Return the recommendation based on the user or a default message
-    return json.dumps(user_plant_data)
+    return json.dumps(user_trypls)
 
-def get_user_garden(user_name):
-    # Map user names to their respective garden numbers
-    garden_mapping = {
-        'new': 0,  # Index in plants.json for 'new'
-        'morgan': 1,  # Index for 'morgan'
-        'alex': 2,  # Index for 'alex'
-        'reese': 3,  # Index for 'reese'
-        'random': 4,  # Index for 'random'
-    }
-
-    # Get the garden number for the user
-    garden_number = garden_mapping.get(user_name, None)
-
-    if garden_number is None:
-        return json.dumps({"error": "User not found"})
-
-    # Load the plant data
-    plants_data = load_cultivars()
-
-    if plants_data is None:
-        return json.dumps({"error": "Error loading plant data"})
-
-    # Check if the garden number is valid
-    if garden_number >= len(plants_data):
-        return json.dumps({"error": "Invalid garden number"})
-
-    # Return the garden data for the user
-    return json.dumps(plants_data[garden_number])
-
-def get_user_garden(user_name):
-    # Map usernames to their respective garden numbers
-    garden_mapping = {
-        'new': 'garden1.json',  # new -> garden1.json
-        'morgan': 'garden2.json',  # morgan -> garden2.json
-        'alex': 'garden3.json',  # alex -> garden3.json
-        'reese': 'garden4.json',  # reese -> garden4.json
-        'random': 'garden5.json',  # random -> garden5.json
-    }
-
-    # Get the garden number for the user
-    garden_number = garden_mapping.get(user_name, None)
-
-    if garden_number is None:
-        return json.dumps({"error": "User not found"})
-
-    # Load the plant data
-    plants_data = load_cultivars()
-
-    if plants_data is None:
-        return json.dumps({"error": "Error loading plant data"})
-
-    # Check if the garden number is valid
-    if garden_number >= len(plants_data):
-        return json.dumps({"error": "Invalid garden number"})
-
-    # Return the garden data for the user
-    return plants_data[garden_number]
-
-def giveMessage(json_vector):
+def generateMessages(json_vector):
     # Parse user vector
     try:
-        user_vector = json_vector
+        user_vector = json.loads(json_vector)
     except json.JSONDecodeError as e:
         print(f"Error parsing JSON: {e}")
         return json.dumps({"error": "Invalid JSON input"})
 
-    # Extract user name
-    user_name = user_vector.get("user", None)
-
-    if user_name is None:
-        return json.dumps({"error": "User name not provided"})
-
-    # Get the user's garden data
-    garden_data = get_user_garden(user_name)
-
-    if isinstance(garden_data, str):  # If it's an error message
-        return garden_data
-
-    # Extract time scores
+    # Extract morning, afternoon, and evening scores
     morning_score = user_vector.get("morning", 0)
-    evening_score = user_vector.get("evening", 0)
     afternoon_score = user_vector.get("afternoon", 0)
+    evening_score = user_vector.get("evening", 0)
 
     # Determine the time with the highest score
     time_scores = {
@@ -153,38 +93,36 @@ def giveMessage(json_vector):
         "afternoon": afternoon_score,
         "evening": evening_score,
     }
-    max_time = max(time_scores, key=time_scores.get)
-    max_score = time_scores[max_time]
+    max_time = max(time_scores, key=time_scores.get)  # Get the time with the highest score
 
-    # Assign a message based on the time with the highest score
-    messages = {
-        "morning": "You're a morning person! Your garden looks best in the early hours.",
-        "afternoon": "You love the afternoon sun! Your garden shines brightly during the day.",
-        "evening": "Evenings are your favorite time! Your garden is perfect for dusk.",
-    }
-    time_message = messages.get(max_time, "No specific time preference detected.")
 
-    # Combine results
-    combined_result = {
-        "message": time_message,
-        "garden": garden_data,  # Include the user's garden data
-    }
-
-    # Return as JSON string
-    #return json.dumps(combined_result)
+    # Pick plants based on the highest time score
+    if max_time == "morning":
+        return "You are a morning person"
+    elif max_time == "evening":
+        return "You are an evening person"
+    elif max_time == "afternoon":
+        return "You are an afternoon person"
+    else:
+        return 4
 
 
 
-# Test block
+# Example usage
 if __name__ == "__main__":
     # Example user vector for testing
     user_vector = {
         "user": "new",
-        "morning": 0.8,
-        "afternoon": 0.5,
-        "evening": 0.3
+        "ornament": 0.5,
+        "herb": 0.5,
+        "crop": 0.5,
+        "mushroom": 0.5,
+        "eoc_ideal": 0.5,
+        "morning": 1,
+        "evening": 0,
+        "afternoon": 0
     }
 
     # Call the function you want to test
-    result = giveMessage(user_vector)
+    result = generateMessages(json.dumps(user_vector))
     print("Test Result:", result)
