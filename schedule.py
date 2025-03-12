@@ -69,12 +69,56 @@ def getUser(data):
 
     # Get the corresponding plant entry
     user_plant_data = plants_data[index]
-    user_trypls = generateMessages(json.dumps(data))
+    user_trypls = userTime(json.dumps(data))
 
     # Return the recommendation based on the user or a default message
     return json.dumps(user_trypls)
 
-def generateMessages(json_vector):
+def findLast(data):
+    # Check if the data contains 'user' key directly
+    if isinstance(data, dict) and 'user' in data:
+        user_name = data.get('user')  # Extract the 'user' key from the data
+    else:
+        return 'Invalid data structure'
+
+    # Load the plant data
+    plants_data = load_cultivars()
+
+    if plants_data is None:
+        return 'Error loading plant data'
+
+    switch = {
+        'new': 0,  # Index in plants.json for 'new'
+        'morgan': 1,  # Index for 'morgan'
+        'alex': 2,  # Index for 'alex'
+        'reese': 3,  # Index for 'reese'
+        'random': 4,  # Index for 'random'
+    }
+
+    # Get the index for the user or use a default if not found
+    index = switch.get(user_name, None)
+
+    if index is None or index >= len(plants_data):
+        return 'User not found or invalid index'
+
+    # Get the corresponding plant entry
+    user_plant_data = plants_data[index]
+
+    # Extract the last item of each section
+    last_items = {}
+    for section, items in user_plant_data.items():
+        if isinstance(items, list):  # Check if the section contains a list of items
+            if items:  # Ensure the list is not empty
+                last_items[section] = items[-1]  # Get the last item in the section
+            else:
+                last_items[section] = None  # If the list is empty, set to None
+        else:
+            last_items[section] = items  # If it's not a list, keep the value as-is
+
+    # Return the last items of each section
+    return json.dumps(last_items)
+
+def userTime(json_vector):
     # Parse user vector
     try:
         user_vector = json.loads(json_vector)
@@ -98,7 +142,7 @@ def generateMessages(json_vector):
 
     # Pick plants based on the highest time score
     if max_time == "morning":
-        return "You are a morning person"
+        return "You are an morning person"
     elif max_time == "evening":
         return "You are an evening person"
     elif max_time == "afternoon":
@@ -106,6 +150,13 @@ def generateMessages(json_vector):
     else:
         return 4
 
+def getMessage(categoryMessage):
+    cultivars_data = load_cultivars()
+
+    # Filter cultivars by category and extract the 'message' field
+    cultivarMessages = [item['message'] for item in cultivars_data if item['category'] == categoryMessage]
+
+    return cultivarMessages
 
 
 # Example usage
@@ -124,5 +175,5 @@ if __name__ == "__main__":
     }
 
     # Call the function you want to test
-    result = generateMessages(json.dumps(user_vector))
+    result = userTime(json.dumps(user_vector))
     print("Test Result:", result)

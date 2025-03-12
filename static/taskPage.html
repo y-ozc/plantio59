@@ -3,104 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garden Page</title>
-    <link rel="stylesheet" href="static/styles.css">
-    <style>
-        .todo-box {
-            border: 1px solid #ccc;
-            padding: 20px;
-            margin: 10px;
-            width: 200px;
-            text-align: center;
-            display: inline-block;
-        }
-        .highlight {
-            background-color: #f0f8ff; /* Light blue background for the highlighted box */
-            border: 2px solid #007bff; /* Blue border for the highlighted box */
-        }
-    </style>
+    <title>Your Tasks for Today</title>
+    <link rel="stylesheet" href="static/styles.css"> <!-- Link to external CSS file -->
 </head>
 <body>
-    <button id="exit" onclick="exit()">Exit Demo</button>
-    <h1>Your Garden</h1>
-    <p id="message"></p>
-    <h2>Plants in Your Garden</h2>
-    <ul id="garden-plants"></ul>
+    <div class="tasks-container">
+        <!-- Heading -->
+        <div class="tasks-heading">Your tasks for today</div>
 
-    <!-- To-Do Boxes -->
-    <div id="todo-container">
-        <div id="morning-box" class="todo-box">
-            <h3>Morning</h3>
-            <p id="morning-message"></p>
-        </div>
-        <div id="afternoon-box" class="todo-box">
-            <h3>Afternoon</h3>
-            <p id="afternoon-message"></p>
-        </div>
-        <div id="evening-box" class="todo-box">
-            <h3>Evening</h3>
-            <p id="evening-message"></p>
-        </div>
+        <!-- Morning Tasks Table -->
+        <h2>Morning</h2>
+        <table class="tasks-table">
+            <tr>
+                <th>Task</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Water the plants</td>
+                <td>✅</td>
+            </tr>
+        </table>
+
+        <!-- Afternoon Tasks Table -->
+        <h2>Afternoon</h2>
+        <table class="tasks-table">
+            <tr>
+                <th>Task</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Check soil moisture</td>
+                <td>⏳</td>
+            </tr>
+        </table>
+
+        <!-- Evening Tasks Table -->
+        <h2>Evening</h2>
+        <table class="tasks-table">
+            <tr>
+                <th>Task</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Bring plants inside</td>
+                <td>❌</td>
+            </tr>
+        </table>
+
+        <!-- Exit Button -->
+        <button id="exit" onclick="exit()">Exit Demo</button>
     </div>
 
     <p id="test"></p>
 
 <script>
-    window.onload = loadGarden();
-
-    function selectVector() {
-            const user_vectors = sessionStorage.getItem('vector');
-            const data = JSON.parse(user_vectors) || [];
-            const params = new URLSearchParams(window.location.search);
-            const username = params.get("dataset");
-
-            const selectedVector = data.find(entry => entry.user == username);
-            return selectedVector;
-        }
-
-    function loadGarden() {
-    // Get the user vector
-    const userVector = selectVector();
-
-    // Check if userVector is valid
-    if (!userVector) {
-        document.getElementById("test").textContent = "No data found in sessionStorage.";
-        return; // Exit the function early
-    }
-
-    // Display the user vector temporarily (optional)
-    document.getElementById("test").textContent = "Sending data...";
-
-    // Send the user vector to the server
-    fetch('/api/task-function', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userVector)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(result => {
-        // Display the result from the server
-        document.getElementById('test').textContent = JSON.stringify(result, null, 2);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Display the error to the user
-        document.getElementById('test').textContent = `Error: ${error.message}`;
-    });
-}
-
-
-
-
     function exit() {
-        window.location.href = "/";
+        alert('Exiting the demo!');
     }
 </script>
 </body>
