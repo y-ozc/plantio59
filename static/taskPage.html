@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Tasks for Today</title>
-    <link rel="stylesheet" href="static/styles.css"> <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="static/styles.css">
+    <link rel="icon" type="image/jpg" href="static/PlantioLogo.JPG">
 </head>
 <body>
+    <button id="exit" onclick="exit()">Exit Demo</button>
     <div class="tasks-container">
         <!-- Heading -->
         <div class="tasks-heading">Your tasks for today</div>
@@ -50,16 +52,14 @@
             </tr>
         </table>
 
-        <!-- Exit Button -->
-        <button id="exit" onclick="exit()">Exit Demo</button>
     </div>
 
     <p id="test"></p>
 
 <script>
     function exit() {
-        alert('Exiting the demo!');
-    }
+            window.location.href = "/"
+        }
 </script>
 </body>
 </html>
