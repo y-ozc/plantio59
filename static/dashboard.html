@@ -27,19 +27,26 @@
     </table>
 
 
-    <h3>Add New Entry:</h3>
+    <!-- <h3>Add New Entry:</h3>
     <input type="text" id="name" placeholder="Name">
     <input type="number" id="type_index" placeholder="0">
-    <button onclick="addData()">Add</button>
+    <button onclick="addData()">Add</button> -->
 
     <div id="buttons-container">
         <button id="recommend" onclick="openRecPage()">Reccomend A Plant</button>
         <button id="todolist" onclick="openTaskPage()">See Todays Tasks</button>
     </div>
 
-    <div>
+    <!-- <div>
         <p id="example">aaa</p>
+    </div> -->
+
+    <div>
+        <h3>Demo Utility:</h3>
+        <p>Use this button to simulate the day passing.</p>
+        <button id="morning-btn" onclick="advanceDay()">Advance Day</button>
     </div>
+
 
     <script>
         const params = new URLSearchParams(window.location.search);
@@ -49,6 +56,18 @@
             window.location.href = "/"
         }
 
+        function advanceDay() {
+            const gardenData = JSON.parse(sessionStorage.getItem('selectedData'));
+
+            gardenData.forEach(plant => {
+                plant.lastLogSince = (plant.lastLogSince || 0) + 1; // Ensure it's a number before incrementing
+            });
+
+            // Save the updated garden data back to session storage
+            sessionStorage.setItem('selectedData', JSON.stringify(gardenData));
+
+
+        }
 
         // Load Data from API on Page Load
         window.onload = async function () {
@@ -109,62 +128,15 @@
                 tbody.appendChild(tr);
             });
 
-            // for testing to see user vectors being acessed
-            const user_vector = sessionStorage.getItem('vector');
-            if (user_vector) {
-                document.getElementById("example").textContent = user_vector;
-            } else {
-                document.getElementById("example").textContent = "No data found in sessionStorage.";
-            }
-        }
-        // Add Data to sessionStorage
-        async function addData() {
-            let name = document.getElementById("name").value;
-            let typeIndex = parseInt(document.getElementById("type_index").value, 10);
+            // // for testing to see user vectors being acessed
+            // const user_vector = sessionStorage.getItem('vector');
+            // if (user_vector) {
+            //     document.getElementById("example").textContent = user_vector;
+            // } else {
+            //     document.getElementById("example").textContent = "No data found in sessionStorage.";
+            // }
 
-            // Make sure the type index is valid
-            if (isNaN(typeIndex)) {
-                alert("Please select a valid item type and name");
-                return;
-            }
 
-            let storedData = JSON.parse(sessionStorage.getItem('selectedData') || "[]");
-            let cultivar_data = JSON.parse(sessionStorage.getItem("cultivar_data") || '[{"cultivarName":"DID NOT WORK","category":0,"EOC":0,"waterOnceEvery":0,"info":"nope"}]');
-
-            // Ensure cultivar_data is an array
-            if (!Array.isArray(cultivar_data)) {
-                console.error("cultivar_data is not an array:", cultivar_data);
-                alert("Data format error.");
-                return;
-            }
-
-            console.log("Type Index:", typeIndex);
-            console.log("Cultivar Data:", cultivar_data);
-            console.log("Cultivar Data Length:", cultivar_data.length);
-
-            const type = cultivar_data[typeIndex];
-            if (!type) {
-                alert("No matching data found for that number. Max length = " + cultivar_data.length);
-                return;
-            }
-
-            // Create a new entry
-            const newEntry = {
-                "name": name,
-                "cultivar": type.cultivarName,
-                "eoc": type.EOC,
-                "lastLogSince": "0"
-            };
-
-            // Add new entry to the array
-            storedData.push(newEntry);
-
-            // Update sessionStorage
-            sessionStorage.setItem('selectedData', JSON.stringify(storedData));
-
-            alert("Entry added successfully!");
-
-            loadData(); // Reload data after adding
         }
     </script>
 

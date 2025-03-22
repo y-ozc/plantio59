@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Page</title>
     <link rel="stylesheet" href="static/styles.css">
 </head>
+
 <body>
     <button id="exit" onclick="exit()">Exit Demo</button>
     <h1>Tasks</h1>
+    <h3>Reminder scheduled for:</h3>
+    <h3 id="reminder">Morning</h3>
+    <table id="task-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Cultivar</th>
+                <th>Info</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="task-body">
+            <!-- Table rows will be inserted here -->
+        </tbody>
+    </table>
     <p id="example"></p>
+    <div>
+        <h3>Demo Utility:</h3>
+        <p>To speed up testing, please select the time slot these tasks were completed manually. Realistically, the app would assign a slot based on the current time.</p>
+        <button id="morning-btn" onclick="updateUser(1)">Morning</button>
+        <button id="noon-btn" onclick="updateUser(2)">Noon</button>
+        <button id="evening-btn" onclick="updateUser(3)">Evening</button>
+    </div>
 </body>
 <script>
-    window.onload = example()
+    window.onload = genarateTasks()
 
-    function example(){
+    function example() {
         fetch('/api/task-function')
-        .then(response => response.json())  // Parse JSON response
+            .then(response => response.json())  // Parse JSON response
             .then(data => {
                 document.getElementById("example").innerText = data.message; // Update paragraph text
             })
@@ -24,9 +48,158 @@
 
     }
 
-    function exit(){
-            window.location.href = "/"
+    function changeReminder(){
+        const user_vectors = sessionStorage.getItem('vector');
+        const data = JSON.parse(user_vectors) || [];
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get("dataset");
+
+        const selectedVector = data.find(entry => entry.user == username);
+
+        const schedule = selectedVector.schedule;
+        const sum = schedule.reduce((acc, val) => acc + val, 0); 
+
+        average = sum/5;
+
+        let slot = "Morning";
+
+        if (average > 1.3333 && average < 2.6666){
+            slot = "Noon";
+        } else if (average >= 2.6666){
+            slot = "Evening";
         }
 
+        const reminder = document.getElementById("reminder");
+        reminder.innerText = slot;
+    }
+
+    function genarateTasks() {
+        const gardenData = JSON.parse(sessionStorage.getItem('selectedData'));  // Garden data (example)
+        const cultivarData = JSON.parse(sessionStorage.getItem('cultivar_data'));  // Cultivar data (example)
+
+        // Create a dictionary to store the cultivar name and water interval
+        let cultivarDictionary = {};
+
+        // Loop through the cultivar data and populate the dictionary
+        cultivarData.forEach(cultivar => {
+            const name = cultivar.cultivarName;  // Get the cultivar name
+            const wateringInterval = cultivar.waterOnceEvery;  // Get the watering interval
+            const info = cultivar.info || 'No information available';  // Ensure info is always set
+            cultivarDictionary[name] = { wateringInterval, info };  // Store both watering interval and info
+        });
+
+        let filteredGarden = [];
+        let filteredIndexes = [];  // To store the indexes of filtered plants
+
+        // Loop through the garden data to filter based on the watering interval
+        for (let i = 0; i < gardenData.length; i++) {
+            const plant = gardenData[i];  // Get the current plant
+            const cultivarName = plant.cultivar;  // Get the cultivar name for the current plant
+
+            // Ensure the cultivar exists in the dictionary before proceeding
+            if (cultivarDictionary[cultivarName]) {
+                const waterOnceEvery = cultivarDictionary[cultivarName].wateringInterval;  // Get the watering interval for that cultivar
+
+                // Check if the lastLogSince is greater than or equal to the watering interval
+                if (plant.lastLogSince >= waterOnceEvery) {
+                    filteredGarden.push(plant);  // If it meets the condition, add to the filteredGarden array
+                    filteredIndexes.push(i);  // Store the index of the filtered plant
+                }
+            }
+        }
+
+        const taskBody = document.getElementById('task-body');  // Get the tbody element where the rows will go
+
+        // Clear any existing rows (optional, in case you're re-populating the table)
+        taskBody.innerHTML = '';
+
+        // Loop through the filteredGarden array to create and insert table rows
+        filteredGarden.forEach((plant, index) => {
+            // Create a new row
+            const row = document.createElement('tr');
+
+            // Create and populate the 'Name' cell
+            const nameCell = document.createElement('td');
+            nameCell.textContent = plant.name;  // Assuming plant object has a 'name' field
+            row.appendChild(nameCell);
+
+            // Create and populate the 'Cultivar' cell
+            const cultivarCell = document.createElement('td');
+            cultivarCell.textContent = plant.cultivar;  // Assuming plant object has a 'cultivar' field
+            row.appendChild(cultivarCell);
+
+            // Create and populate the 'Info' cell
+            const infoCell = document.createElement('td');
+            const cultivarInfo = cultivarDictionary[plant.cultivar].info;  // Get the info from the cultivar dictionary
+            infoCell.textContent = cultivarInfo || 'No information available';  // Add info, or a default message if none exists
+            row.appendChild(infoCell);
+
+            // Create and populate the 'Done' button cell
+            const doneCell = document.createElement('td');
+            const doneButton = document.createElement('button');
+            doneButton.textContent = 'Done';  // Button label
+            doneButton.classList.add('done-button');  // Add a class for styling, optional
+            doneButton.onclick = () => markAsDone(plant, filteredIndexes[index], doneButton, gardenData);  // Attach the click handler with index tracking
+            doneCell.appendChild(doneButton);
+            row.appendChild(doneCell);
+
+            // Append the row to the table body
+            taskBody.appendChild(row);
+
+            changeReminder();
+        });
+    }
+
+    // Function to handle the "Done" button click
+    function markAsDone(plant, plantIndex, doneButton, gardenData) {
+        // Set the plant's lastLogSince to 0
+        plant.lastLogSince = 0;
+
+        // Grey out the button
+        doneButton.disabled = true;
+        doneButton.style.backgroundColor = '#d3d3d3';
+        doneButton.style.color = '#a9a9a9';
+
+        // Update the plant in the gardenData using the plantIndex
+        gardenData[plantIndex].lastLogSince = 0;
+
+        // Move the updated plant to the end of the gardenData array
+        gardenData.push(gardenData.splice(plantIndex, 1)[0]);
+
+        // Update sessionStorage to reflect the changes
+        sessionStorage.setItem('selectedData', JSON.stringify(gardenData));
+    }
+
+    function updateUser(time) {
+        const user_vectors = sessionStorage.getItem('vector');
+        const data = JSON.parse(user_vectors) || [];
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get("dataset");
+        const selectedVector = data.find(entry => entry.user == username);
+
+        if (selectedVector && (username !== 'random')) {
+            const schedule = selectedVector.schedule || [];
+
+            // Add the new time to the schedule (FIFO)
+            schedule.push(time);
+            if (schedule.length > 5) {
+                schedule.shift(); // Remove the first item (FIFO)
+            }
+
+            // Update the schedule in the selectedVector
+            selectedVector.schedule = schedule;
+
+            // Save the updated data back to sessionStorage
+            sessionStorage.setItem('vector', JSON.stringify(data));
+            
+        } 
+        window.location.href = `dashboard.html?dataset=${username}`;
+    }
+
+    function exit() {
+        window.location.href = "/"
+    }
+
 </script>
+
 </html>

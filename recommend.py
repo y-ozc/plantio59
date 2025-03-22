@@ -54,26 +54,56 @@ def genRec(data):
     if plants_data is None:
         return 'Error loading plant data'
     
-    
-    switch = {
-        'new': 0,  # Index in plants.json for 'new'
-        'morgan': 1,  # Index for 'morgan'
-        'alex': 2,  # Index for 'alex'
-        'reese': 3,  # Index for 'reese'
-        'random': 4,  # Index for 'random'
+    # default eoc
+    eoc_ideal = 0.5
+    if isinstance(data, dict) and 'eoc_ideal' in data:
+        eoc_ideal = data.get('eoc_ideal')  # Extract the 'eoc_ideal' key from the data
+    else:
+        # return wild card
+        None
+
+        # Define category mapping
+    category_map = {
+        1: "ornament",
+        2: "herb",
+        3: "crop",
+        4: "mushroom"
     }
 
-    # Get the index for the user or use a default if not found
-    index = switch.get(user_name, None)
+    # Filter and rank plants based on relevance
+    candidate_plants = []
 
-    if index is None or index >= len(plants_data):
-        return 'User not found or invalid index'
+    for plant in plants_data:
+        eoc = float(plant.get("EOC", 0.5))  # Default to 0.5 if missing
+        category = plant.get("category")
 
-    # Get the corresponding plant entry
-    user_plant_data = plants_data[index]
+        # Ensure category is valid
+        if category not in category_map:
+            continue
 
-    # Return the recommendation based on the user or a default message
-    return json.dumps(user_plant_data) 
+        category_name = category_map[category]
+
+        # Calculate preference score
+        preference_score = data.get(category_name, 0.5)  # Default to 0.5 if missing
+
+        # Compute ranking score (higher preference and closer EOC are better)
+        score = preference_score - abs(eoc - eoc_ideal)
+
+        # Add a small random factor to the score to introduce some variability
+        randomness_factor = random.uniform(-0.75, 0.75)  # Random number between -0.05 and 0.05
+        score += randomness_factor
+
+        # Store the plant along with its score
+        candidate_plants.append((plant, score))
+
+    # Sort by descending score (higher scores first)
+    sorted_plants = sorted(candidate_plants, key=lambda x: x[1], reverse=True)
+
+    # Pick the top 3 recommendations
+    recommended_plants = [plant[0] for plant in sorted_plants[:3]]
+
+    # Return recommendations as a JSON string
+    return json.dumps(recommended_plants, indent=4) 
 
 
 

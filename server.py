@@ -40,13 +40,13 @@ def rec():
 def task():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'taskPage.html')
 
-# STUB
 @app.route('/api/rec-function', methods=['POST'])
 def rec_fn():
     # Get JSON data from the request
     data = request.get_json()
     recommendation = recommend.genRec(data)
     return jsonify({'recommendation': recommendation})
+
 
 # STUB
 @app.route("/api/task-function", methods=['GET'])

@@ -16,7 +16,8 @@
             <tr>
                 <th>Category</th>
                 <th>Cultivar</th>
-                <th>Watering</th>
+                <th>Watering Frequency (days)</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody id="data-body">
@@ -41,47 +42,165 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(userVector)
-            })
-                .then(response => response.json())
+            }).then(response => response.json())
                 .then(result => {
-                    // document.getElementById('test').textContent = JSON.stringify(result, null, 2);
-
                     const recString = result.recommendation;
-                    //document.getElementById('test').textContent = recString
-                    recs = JSON.parse(recString);
+                    const recs = JSON.parse(recString); // Ensure parsing since recommendation is a JSON string
 
                     const tableBody = document.getElementById('data-body');
                     tableBody.innerHTML = "";
 
-                    // Create a row for the plant recommendation
-                    const row = document.createElement('tr');
+                    recs.forEach(rec => {
+                        const row = document.createElement('tr');
+
+                        const categoryCell = document.createElement('td');
+                        categoryCell.textContent = getCategory(rec.category);
+                        row.appendChild(categoryCell);
+
+                        const cultivarNameCell = document.createElement('td');
+                        cultivarNameCell.textContent = rec.cultivarName;
+                        row.appendChild(cultivarNameCell);
+
+                        const waterIntervalCell = document.createElement('td');
+                        waterIntervalCell.textContent = rec.waterOnceEvery;
+                        row.appendChild(waterIntervalCell);
+
+                        // Button cell
+                        const buttonCell = document.createElement('td'); // Create a <td> for the button
+                        const button = document.createElement('button');
+                        button.textContent = 'Add';
+
+                        // Correct button click handler (pass reference to addPlantToGarden with the recommendation)
+                        button.onclick = () => addPlantToGarden(rec);
+
+                        buttonCell.appendChild(button); // Append the button to the button cell
+                        row.appendChild(buttonCell);    // Append the button cell to the row
 
 
-                    const categoryCell = document.createElement('td');
-                    categoryCell.textContent = getCategory(recs.category);
-                    row.appendChild(categoryCell);
-
-                    const cultivarNameCell = document.createElement('td');
-                    cultivarNameCell.textContent = recs.cultivarName;
-                    row.appendChild(cultivarNameCell);
-
-                    const waterIntervalCell = document.createElement('td');
-                    waterIntervalCell.textContent = recs.waterOnceEvery;
-                    row.appendChild(waterIntervalCell);
-
-
-
-                    // Append the row to the tbody
-                    tableBody.appendChild(row);
-
+                        tableBody.appendChild(row);
+                    });
                 })
                 .catch(error => console.error('Error:', error)); // Handle errors
 
         }
 
+        function addPlantToGarden(rec) {
+            // Convert the rec object to a string using JSON.stringify
+            const recString = JSON.stringify(rec, null, 2);  // The second argument (null) and third argument (2) add indentation for readability
+
+            // Display an alert with the stringified rec object
+            alert('Recommendation details: \n' + recString);
+
+            const plantName = prompt('Enter the name for the plant:');
+
+            // If the user didn't click Cancel (which returns null) and didn't enter anything
+            if (plantName === null) {
+                // User canceled, do nothing and just close the prompt
+                return;
+            }
+
+            if (plantName.trim() === "") {
+                // If the input is empty, show an alert
+                alert('Please provide a plant name!');
+            } else {
+                let storedData = JSON.parse(sessionStorage.getItem('selectedData') || "[]");
+
+                // Create a new entry
+                const newEntry = {
+                    "name": plantName, // Use plantName instead of name
+                    "cultivar": rec.cultivarName,
+                    "eoc": rec.EOC, // Assuming EOC is a property in rec
+                    "lastLogSince": "0"
+                };
+
+                // Add new entry to the array
+                storedData.push(newEntry);
+
+                // Update sessionStorage
+                sessionStorage.setItem('selectedData', JSON.stringify(storedData));
+
+                alert("Entry added successfully!" + JSON.stringify(newEntry));
+
+
+                // update user vector
+                const params = new URLSearchParams(window.location.search);
+                const username = params.get("dataset");
+
+                if (username !== 'random') {
+                    // returns the correct vector
+                    selectedVector = selectVector();
+
+                    if (rec.category !== 1) {
+                        selectedVector['ornament'] = Math.max(0.05, Number((selectedVector['ornament'] * 0.75).toPrecision(4)));
+                    } else {
+                        selectedVector['ornament'] = Math.min(selectedVector['ornament'] + 0.1, 1);
+                    }
+
+                    if (rec.category !== 2) {
+                        selectedVector['herb'] = Math.max(0.05, Number((selectedVector['herb'] * 0.75).toPrecision(4)));
+                    } else {
+                        selectedVector['herb'] = Math.min(selectedVector['herb'] + 0.1, 1);
+                    }
+
+                    if (rec.category !== 3) {
+                        selectedVector['crop'] = Math.max(0.05, Number((selectedVector['crop'] * 0.75).toPrecision(4)));
+                    } else {
+                        selectedVector['crop'] = Math.min(selectedVector['crop'] + 0.1, 1);
+                    }
+
+                    if (rec.category !== 4) {
+                        selectedVector['mushroom'] = Math.max(0.05, Number((selectedVector['mushroom'] * 0.75).toPrecision(4)));
+                    } else {
+                        selectedVector['mushroom'] = Math.min(selectedVector['mushroom'] + 0.1, 1);
+                    }
+
+                    selectedVector['eoc_ideal'] = Number(newEOC(storedData, 0.2).toPrecision(4));
+
+                    const user_vectors = sessionStorage.getItem('vector');
+                    const vectors = JSON.parse(user_vectors || []);
+
+                    const index = vectors.findIndex(entry => entry.user === username);
+
+                    if (index !== -1) {
+                        // Replace the entry at the found index
+                        vectors[index] = selectedVector;
+                    } else {
+                        alert("User not found in the vector array.");
+                    }
+
+                    sessionStorage.setItem('vector', JSON.stringify(vectors));
+
+                }
+                window.location.href = `dashboard.html?dataset=${username}`;
+            }
+        }
+
+        function newEOC(gardenJson, decayRate) {
+
+            let weightedSum = 0;
+            let totalWeight = 0;
+            let numPlants = gardenJson.length;
+
+            for (let index = 0; index < gardenJson.length; index++) {
+                let plant = gardenJson[index];
+                let eoc = parseFloat(plant.eoc || 0);  // Get EOC, default to 0 if missing
+
+                // Exponential decay where newer plants have more weight
+                let weight = Math.exp(-decayRate * (numPlants - index - 1));
+                weightedSum += eoc * weight;
+                totalWeight += weight;
+            }
+
+            // Compute the weighted average
+            let idealEoc = totalWeight > 0 ? weightedSum / totalWeight : 0;
+
+            return idealEoc;
+        }
+
+
         function getCategory(number) {
             const dictionary = {
-                1: 'Ornamental Plant',
+                1: 'Ornament',
                 2: 'Herb',
                 3: 'Crop',
                 4: 'Mushroom'

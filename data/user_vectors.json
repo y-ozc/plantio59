@@ -6,42 +6,41 @@
         "crop": 0.5,
         "mushroom": 0.5,
         "eoc_ideal": 0.5,
-        "schedule": 1
+        "schedule": [1,2,3,1,2]
     },
     {
         "user": "morgan",
-        "ornament": 0.5,
-        "herb": 0.5,
-        "crop": 0.5,
-        "mushroom": 0.5,
-        "eoc_ideal": 0.5,
-        "schedule": 1
+        "ornament": 0.8,
+        "herb": 0.9,
+        "crop": 0.7,
+        "mushroom": 0.1,
+        "eoc_ideal": 0.73,
+        "schedule": [1,2,3,1,2]
     },
     {
         "user": "alex",
-        "ornament": 0.5,
-        "herb": 0.5,
-        "crop": 0.5,
-        "mushroom": 0.5,
-        "eoc_ideal": 0.5,
-        "schedule": 1
+        "ornament": 0.9,
+        "herb": 0.1,
+        "crop": 0,
+        "mushroom": 0.8,
+        "eoc_ideal": 0.49,
+        "schedule": [1,2,3,1,2]
     },
     {
         "user": "reese",
-        "ornament": 0.5,
-        "herb": 0.5,
-        "crop": 0.5,
-        "mushroom": 0.5,
-        "eoc_ideal": 0.5,
-        "schedule": 1
-    },
-    {
+        "ornament": 0.3,
+        "herb": 0.7,
+        "crop": 0.9,
+        "mushroom": 0.8,
+        "eoc_ideal": 0.64,
+        "schedule": [1,2,3,1,2]
+    },{
         "user": "random",
         "ornament": 0.5,
         "herb": 0.5,
         "crop": 0.5,
         "mushroom": 0.5,
         "eoc_ideal": 0.5,
-        "schedule": 1
+        "schedule": [1,2,3,1,2]
     }
 ]
