@@ -89,7 +89,7 @@
             const recString = JSON.stringify(rec, null, 2);  // The second argument (null) and third argument (2) add indentation for readability
 
             // Display an alert with the stringified rec object
-            alert('Recommendation details: \n' + recString);
+            // alert('Recommendation details: \n' + recString);
 
             const plantName = prompt('Enter the name for the plant:');
 
@@ -119,7 +119,7 @@
                 // Update sessionStorage
                 sessionStorage.setItem('selectedData', JSON.stringify(storedData));
 
-                alert("Entry added successfully!" + JSON.stringify(newEntry));
+                alert("Entry added successfully!");
 
 
                 // update user vector
