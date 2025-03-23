@@ -10,8 +10,8 @@
 
 <body>
     <button id="exit" onclick="exit()">Exit Demo</button>
-    <h1>Tasks</h1>
-    <h3>Reminder scheduled for:</h3>
+    <h1>Reminders</h1>
+    <h3>Scheduled for:</h3>
     <h3 id="reminder">No Tasks today!</h3>
     <table id="task-table">
         <thead>
@@ -61,11 +61,14 @@
 
         average = sum/5;
 
-        let slot = "Morning";
+        let slot = "";
 
-        if (average > 1.2 && average < 2){
+        if(average >0 && average < 1.5){
+            slot = "Morning";
+        }
+        if (average > 1.5 && average < 2.07){
             slot = "Noon";
-        } else if (average >= 2) {
+        } else if (average<50 && average >= 2.07) {
             slot = "Evening";
         }
 
